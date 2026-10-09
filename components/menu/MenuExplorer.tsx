@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Search, X, Check, UtensilsCrossed } from "lucide-react";
-import { menuItems, type MenuItem, type Category, type DietaryTag } from "@/data/menu";
+import { menuItems, type Category, type DietaryTag } from "@/data/menu";
 
 const categories: ("All" | Category)[] = [
   "All",
@@ -161,7 +161,7 @@ export function MenuExplorer() {
           </div>
           <h3 className="font-heading text-2xl font-bold text-forest mb-2">No matching dishes found</h3>
           <p className="text-charcoal/70 text-sm max-w-md mx-auto mb-6">
-            We couldn't find any items matching your selected criteria. Try adjusting your search term or dietary tags.
+            We couldn&apos;t find any items matching your selected criteria. Try adjusting your search term or dietary tags.
           </p>
           <button
             onClick={clearAllFilters}

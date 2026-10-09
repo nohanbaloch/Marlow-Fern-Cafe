@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Users, Clock, CheckCircle2, Phone, Sparkles } from "lucide-react";
+import { Calendar, Users, Clock, CheckCircle2, Sparkles } from "lucide-react";
 import { site } from "@/data/site";
 
 const timeSlots = [

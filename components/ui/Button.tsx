@@ -23,7 +23,7 @@ type ButtonAsLink = ButtonBaseProps & {
   className?: string;
 };
 
-type ButtonProps = ButtonAsButton | ButtonAsLink;
+export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const variantClasses: Record<Variant, string> = {
   primary:

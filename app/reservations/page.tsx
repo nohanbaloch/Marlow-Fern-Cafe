@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { ReservationForm } from "@/components/reservations/ReservationForm";
 import { site } from "@/data/site";
-import { Clock, Phone, MapPin, ShieldCheck } from "lucide-react";
+import { Clock, Phone, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Reservations",

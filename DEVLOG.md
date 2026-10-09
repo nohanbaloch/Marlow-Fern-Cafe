@@ -75,3 +75,5 @@ All notable updates, architectural decisions, and progress logs for the Marlow &
 - **Deterministic Static Prerendering:** Fixed Next.js 16 blocking prerender error in `Footer.tsx` by replacing dynamic `new Date().getFullYear()` with static constant.
 - **Brand SVG Assets:** Replaced missing `lucide-react` Instagram icon with accessible inline SVG across `Footer.tsx` and `gallery/page.tsx`.
 - **Validation:** 100% clean TypeScript typecheck (`tsc --noEmit`) and successful production build with 8 static pages prerendered.
+- **Windows Path Compatibility:** Fixed Windows cmd-shim path delimiter breakage caused by folder ampersand (`&`) via automated patch script (`scripts/patch-cmd.js`) and `postinstall` hook. Cleaned ESLint warnings and unescaped entity in `MenuExplorer.tsx`.
+
