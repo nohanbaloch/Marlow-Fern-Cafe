@@ -1,8 +1,28 @@
 // /components/layout/Footer.tsx
 import Link from "next/link";
-import { Instagram, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { site } from "@/data/site";
 import { Container } from "@/components/ui/Container";
+
+function InstagramIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
 const quickLinks = [
   { href: "/", label: "Home" },
@@ -13,7 +33,7 @@ const quickLinks = [
 ];
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2026;
 
   return (
     <footer className="bg-forest text-cream" aria-label="Site footer">
@@ -36,7 +56,7 @@ export function Footer() {
                 aria-label="Marlow & Fern on Instagram"
                 className="p-2 rounded-full bg-white/10 hover:bg-terracotta transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
               >
-                <Instagram size={18} aria-hidden="true" />
+                <InstagramIcon size={18} />
               </a>
               <a
                 href={`mailto:${site.contact.email}`}
