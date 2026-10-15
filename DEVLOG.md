@@ -77,3 +77,23 @@ All notable updates, architectural decisions, and progress logs for the Marlow &
 - **Validation:** 100% clean TypeScript typecheck (`tsc --noEmit`) and successful production build with 8 static pages prerendered.
 - **Windows Path Compatibility:** Fixed Windows cmd-shim path delimiter breakage caused by folder ampersand (`&`) via automated patch script (`scripts/patch-cmd.js`) and `postinstall` hook. Cleaned ESLint warnings and unescaped entity in `MenuExplorer.tsx`.
 
+---
+
+## [Phase 3: Web3Forms Integration] — 2026-10-16
+
+### 1. Form Submission Architecture
+- Created `lib/web3forms.ts` central utility for submitting payloads to `https://api.web3forms.com/submit`.
+- Supports environment configuration via `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`.
+- Created `.env.example` template and `.env.local` for local secrets.
+
+### 2. Contact & Reservation Form Enhancements
+- **Contact Form (`components/contact/ContactForm.tsx`):**
+  - Sends visitor name, email, subject, message, and branded email subject header.
+  - Integrated anti-spam honeypot (`botcheck`).
+  - Added alert banner for actionable error feedback and retry support.
+- **Reservation Form (`components/reservations/ReservationForm.tsx`):**
+  - Sends booking details including party size, date, time, seating preference, guest contact info, and special dietary notes.
+  - Integrated anti-spam honeypot (`botcheck`).
+  - Added alert banner with clear messaging if submission encounters an issue.
+
+

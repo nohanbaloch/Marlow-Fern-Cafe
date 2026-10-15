@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Users, Clock, CheckCircle2, Sparkles } from "lucide-react";
+import { Calendar, Users, Clock, CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
 import { site } from "@/data/site";
+import { submitWeb3Forms } from "@/lib/web3forms";
 
 const timeSlots = [
   "8:00 AM",
@@ -38,16 +39,41 @@ export function ReservationForm() {
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
+  const [botcheck, setBotcheck] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      await submitWeb3Forms({
+        from_name: "Marlow & Fern Café Website",
+        subject: `New Table Reservation: ${name} (${guests} ${guests === 1 ? "Guest" : "Guests"} - ${date} at ${time})`,
+        reservation_name: name,
+        reservation_email: email,
+        reservation_phone: phone,
+        party_size: `${guests} ${guests === 1 ? "guest" : "guests"}`,
+        reservation_date: date,
+        reservation_time: time,
+        seating_preference: seating,
+        special_requests: notes || "None provided",
+        botcheck,
+      });
+
       setSubmitted(true);
-    }, 600);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to confirm your reservation. Please try again or give us a call.";
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -96,8 +122,9 @@ export function ReservationForm() {
             setEmail("");
             setPhone("");
             setNotes("");
+            setError(null);
           }}
-          className="px-8 py-3 rounded-full bg-forest text-cream font-semibold text-sm hover:bg-terracotta transition-colors"
+          className="px-8 py-3 rounded-full bg-forest text-cream font-semibold text-sm hover:bg-terracotta transition-colors cursor-pointer"
         >
           Make Another Booking
         </button>
@@ -107,7 +134,29 @@ export function ReservationForm() {
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-10 border border-sand shadow-sm max-w-2xl mx-auto">
+      {error && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="flex-1 leading-snug">
+            <p className="font-semibold text-amber-950">Reservation Error</p>
+            <p className="text-xs text-amber-800 mt-0.5">{error}</p>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Anti-spam honeypot */}
+        <input
+          type="text"
+          name="botcheck"
+          value={botcheck}
+          onChange={(e) => setBotcheck(e.target.value)}
+          className="hidden"
+          style={{ display: "none" }}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+
         {/* Step 1: Party Size */}
         <div>
           <label className="block text-sm font-semibold text-forest mb-3 flex items-center gap-2">
@@ -268,7 +317,7 @@ export function ReservationForm() {
             disabled={isSubmitting}
             className="w-full py-4 rounded-full bg-forest text-cream font-semibold text-base hover:bg-terracotta transition-colors shadow-md disabled:opacity-50 cursor-pointer"
           >
-            {isSubmitting ? "Confirming Table..." : `Book Table for ${guests} ${guests === 1 ? "Guest" : "Guests"}`}
+            {isSubmitting ? "Confirming Table via Web3Forms..." : `Book Table for ${guests} ${guests === 1 ? "Guest" : "Guests"}`}
           </button>
           <p className="text-center text-xs text-charcoal/60 mt-3">
             {site.reservationPolicy}

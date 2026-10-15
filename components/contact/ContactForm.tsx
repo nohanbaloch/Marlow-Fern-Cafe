@@ -1,23 +1,45 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, Send, AlertCircle } from "lucide-react";
+import { submitWeb3Forms } from "@/lib/web3forms";
 
 export function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("General Inquiry");
   const [message, setMessage] = useState("");
+  const [botcheck, setBotcheck] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      await submitWeb3Forms({
+        from_name: "Marlow & Fern Café Website",
+        subject: `New Contact Inquiry: ${subject} (${name})`,
+        name,
+        email,
+        inquiry_subject: subject,
+        message,
+        botcheck,
+      });
+
       setSubmitted(true);
-    }, 500);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to submit your message. Please try again.";
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -36,8 +58,9 @@ export function ContactForm() {
             setName("");
             setEmail("");
             setMessage("");
+            setError(null);
           }}
-          className="px-6 py-2.5 rounded-full bg-forest text-cream text-sm font-semibold hover:bg-terracotta transition-colors"
+          className="px-6 py-2.5 rounded-full bg-forest text-cream text-sm font-semibold hover:bg-terracotta transition-colors cursor-pointer"
         >
           Send Another Message
         </button>
@@ -52,7 +75,29 @@ export function ContactForm() {
         Have questions about private hire, custom cake orders, or our coffee origins? Let us know.
       </p>
 
+      {error && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="flex-1 leading-snug">
+            <p className="font-semibold text-amber-950">Submission Error</p>
+            <p className="text-xs text-amber-800 mt-0.5">{error}</p>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Anti-spam honeypot */}
+        <input
+          type="text"
+          name="botcheck"
+          value={botcheck}
+          onChange={(e) => setBotcheck(e.target.value)}
+          className="hidden"
+          style={{ display: "none" }}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+
         <div>
           <label htmlFor="contact-name" className="block text-xs font-medium text-charcoal/70 mb-1">
             Your Name *
@@ -121,7 +166,7 @@ export function ContactForm() {
           className="w-full py-3.5 rounded-full bg-forest text-cream font-semibold text-sm hover:bg-terracotta transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
         >
           <Send size={16} />
-          <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
+          <span>{isSubmitting ? "Sending via Web3Forms..." : "Send Message"}</span>
         </button>
       </form>
     </div>
